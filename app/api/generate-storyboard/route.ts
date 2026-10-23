@@ -4,20 +4,17 @@ import { generateStoryboardFromPrompt } from "@/lib/ai";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { prompt } = body;
+    const { prompt, provider } = body;
 
-    if (!prompt) {
+    if (!prompt || typeof prompt !== "string") {
       return NextResponse.json({ error: "Missing prompt" }, { status: 400 });
     }
 
-    const result = await generateStoryboardFromPrompt(prompt);
+    const result = await generateStoryboardFromPrompt(prompt, provider || "auto");
 
     return NextResponse.json({ result });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: "Failed to generate storyboard" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to generate storyboard" }, { status: 500 });
   }
 }
